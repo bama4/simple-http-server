@@ -13,4 +13,4 @@ CMakeFiles
 bin
 
 *.a
-*.sa
+*.so

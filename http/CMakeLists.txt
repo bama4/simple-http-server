@@ -10,4 +10,4 @@ file(GLOB SOURCES src/*.c)
 # Enable all compile options
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
-add_library(http STATIC ${SOURCES})
+add_library(http SHARED ${SOURCES})
