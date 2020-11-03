@@ -1,16 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Sets the project name
-project(simple-http-server VERSION 0.1)
+project(simple_http_server VERSION 0.1)
 
+add_subdirectory(http)
+add_subdirectory(socket_tcp_manager)
 
-include_directories(include)
+include_directories(http/include socket_tcp_manager/include simple_http_server/include)
 
-# Manually add source files
-set(SOURCES src/main.c)
+# Places output in bin
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Wildcard add source files
-# file(GLOB SOURCES src/*.c)
+file(GLOB SOURCES simple_http_server/src/*.c)
 
-# Compile sources 
-add_executable(simple-http-server ${SOURCES})
+add_compile_options(-Wall -Wextra -pedantic -Werror)
+
+add_executable(simple_http_server ${SOURCES})
+
+target_link_libraries(simple_http_server socket_tcp_manager)
+target_link_libraries(simple_http_server http)
