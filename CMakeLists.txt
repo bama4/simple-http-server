@@ -7,6 +7,9 @@ add_subdirectory(socket_tcp_manager)
 
 include_directories(http/include socket_tcp_manager/include simple_http_server/include)
 
+# Places output in bin
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 file(GLOB SOURCES simple_http_server/src/*.c)
 
 add_compile_options(-Wall -Wextra -pedantic -Werror)
