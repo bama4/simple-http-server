@@ -9,13 +9,13 @@ A simple lightweight HTTP server in C
 * GNU Make or another CMake compatible build tool 
 * C11 or higher compiler
 
-### Steps
+#### Steps
 
 First, clone the repository.
 
 ```
 git clone https://github.com/bama4/simple-http-server.git
-cd simple_http_server/
+cd simple-http-server/
 ```
 
 Create a _build/_ directory to store the contents of the build process.
