@@ -15,7 +15,7 @@ First, clone the repository.
 
 ```
 git clone https://github.com/bama4/simple-http-server.git
-cd simple_http_server/
+cd simple-http-server/
 ```
 
 Create a _build/_ directory to store the contents of the build process.
