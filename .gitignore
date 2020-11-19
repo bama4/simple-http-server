@@ -1,5 +1,6 @@
 \#*
 .\#*
+*~
 
 build
 builds
@@ -14,3 +15,4 @@ bin
 
 *.a
 *.so
+a.out
