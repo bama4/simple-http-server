@@ -1,7 +1,7 @@
 /* test_vector.c */
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "test_framework.h"
 #include "vector.c"
@@ -47,54 +47,48 @@ int test_make_vector() {
 }
 
 int test_push_vector() {
-  vector_t vec = {
-    .contents = NULL,
-    .used = 0,
-    .capacity = 0,
-    .item_bytes = 1};
+    vector_t vec = {
+        .contents = NULL, .used = 0, .capacity = 0, .item_bytes = 1};
 
-  char c = 'A';
+    char c = 'A';
 
-  push_vector(&vec, (void*) &c);
+    push_vector(&vec, (void*)&c);
 
-  ASSERT(vec.used == 1);
-  ASSERT(vec.capacity == 1);
-  ASSERT(vec.contents != NULL);
-  ASSERT(vec.contents[0] == c);
+    ASSERT(vec.used == 1);
+    ASSERT(vec.capacity == 1);
+    ASSERT(vec.contents != NULL);
+    ASSERT(vec.contents[0] == c);
 
-  push_vector(&vec, (void*) &c);
+    push_vector(&vec, (void*)&c);
 
-  ASSERT(vec.used == 2);
-  ASSERT(vec.capacity == 2);
-  ASSERT(vec.contents[1] == c);
+    ASSERT(vec.used == 2);
+    ASSERT(vec.capacity == 2);
+    ASSERT(vec.contents[1] == c);
 
-  return SUCCESS;
+    return SUCCESS;
 }
 
 int test_index_vector() {
-  char contents[] = {1, 0, 0, 0, 2, 0, 0, 0};
-  vector_t vec = {
-    .contents = (void*) contents,
-    .used = 2,
-    .capacity = 2,
-    .item_bytes = 4
-  };
+    char contents[] = {1, 0, 0, 0, 2, 0, 0, 0};
+    vector_t vec = {
+        .contents = (void*)contents, .used = 2, .capacity = 2, .item_bytes = 4};
 
-  int* ret = (int*)index_vector(&vec, 0);
-  ASSERT(ret != NULL);
-  ASSERT(*ret == 1);
+    int* ret = (int*)index_vector(&vec, 0);
+    ASSERT(ret != NULL);
+    ASSERT(*ret == 1);
 
-  ret = (int*)index_vector(&vec, 1);
-  ASSERT(ret != NULL);
-  ASSERT(*ret == 2);
+    ret = (int*)index_vector(&vec, 1);
+    ASSERT(ret != NULL);
+    ASSERT(*ret == 2);
 
-  ret = (int*)index_vector(&vec, 10);
-  ASSERT(ret == NULL);
-  return SUCCESS;
+    ret = (int*)index_vector(&vec, 10);
+    ASSERT(ret == NULL);
+    return SUCCESS;
 }
 
 test_func_sig functions[] = {test_roundup, test_make_vector_of_size,
-  test_make_vector, test_push_vector, test_index_vector};
+                             test_make_vector, test_push_vector,
+                             test_index_vector};
 
 int main() {
     for (long unsigned int i = 0; i < sizeof(functions) / 8; i++) {

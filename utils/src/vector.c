@@ -8,7 +8,7 @@
 
 /* Rounds a number up to the nearest power of 2 */
 static size_t roundup(size_t base) {
-  if (base <= 0 || base >= (size_t) -1) {
+    if (base <= 0 || base >= (size_t)-1) {
         return 0;
     }
 
@@ -87,8 +87,8 @@ int push_vector(vector_t* vec, void* item) {
  * Returns NULL if index is invalid
  */
 void* index_vector(vector_t* vec, size_t index) {
-  if (index >= vec->used)
-    return NULL;
+    if (index >= vec->used)
+        return NULL;
 
-  return (void*) &vec->contents[index * vec->item_bytes];
+    return (void*)&vec->contents[index * vec->item_bytes];
 }
