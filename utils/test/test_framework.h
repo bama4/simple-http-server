@@ -1,4 +1,4 @@
-#ifndef
+#ifndef TEST_FRAMEWORK_H_
 #define TEST_FRAMEWORK_H_
 
 #define SUCCESS 0
