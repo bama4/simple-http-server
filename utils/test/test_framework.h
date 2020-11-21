@@ -3,7 +3,13 @@
 
 #define SUCCESS 0
 #define FAIL -1
-#define ASSERT(expr) if(!(expr)) return FAIL
-#define ASSERT_IS_NONE(var) if(var != NULL) return FAIL
+
+#define ASSERT(expr)                                                           \
+    if (!(expr))                                                               \
+        return __LINE__;
+
+#define ASSERT_IS_NONE(var)                                                    \
+    if (var != NULL)                                                           \
+        return __LINE__;
 
 #endif /*TEST_FRAMEWORK_H_*/
