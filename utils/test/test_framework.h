@@ -12,9 +12,9 @@
         return FAIL;                                                           \
     }
 
-#define ASSERT_FALSE(expr)                                                      \
+#define ASSERT_FALSE(expr)                                                     \
     if ((expr)) {                                                              \
-        printf("ASSERT_FALSE failed on line %d\n", __LINE__);                   \
+        printf("ASSERT_FALSE failed on line %d\n", __LINE__);                  \
         return FAIL;                                                           \
     }
 
@@ -27,7 +27,7 @@
 #define ASSERT_NOT_NULL(var)                                                   \
     if (var == NULL) {                                                         \
         printf("ASSERT_NOT_NULL failed on line %d\n", __LINE__);               \
-        return FAIL;                                                          \
+        return FAIL;                                                           \
     }
 
 #endif /*TEST_FRAMEWORK_H_*/
