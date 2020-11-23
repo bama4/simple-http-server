@@ -1,11 +1,3 @@
-/* vector.h */
-
-/*
- * Provides a generic interface to use for a resizeable array
- * The interface is unergonomic and weakly typed, so a type safe
- * wrapper should be created for complex usages
- */
-
 #ifndef VECTOR_H
 #define VECTOR_H
 
@@ -18,34 +10,52 @@ typedef struct {
     char* contents;
 } vector_t;
 
-/*
- * Initializes a new vector and returns a pointer to it
- * Takes a number greater than zero as the size of an item in bytes
- * Returns NULL on a failure
+/*!
+ * @brief    Initializes a new vector of size 0
+ *
+ * @param    item_size Size of the items to be stored in the vector in bytes
+ *
+ * @return   A pointer to the new vector
  */
-vector_t* make_vector(size_t item_bytes);
+vector_t* init_vector(size_t item_size);
 
-/*
- * Initializes a new vector of a certain size
- * Same semantics as make_vector
+/*!
+ * @brief    Initializes a new vector of a certain size
+ *
+ * @param    item_size Size of the items to be stored in the vector in bytes
+ *
+ * @param    init_size Initial size of vector in number of items
+ *
+ * @return   A pointer to the new vector
  */
-vector_t* make_vector_of_size(size_t item_bytes, size_t init_size);
+vector_t* init_vector_of_size(size_t item_size, size_t init_size);
 
-/*
- * Destroys and frees the memory created by make_vector
- * Completely invalidates all pointers to the vector
+/*!
+ * @brief     Destroys and frees the memory created by make_vector
+ *
+ * @param[in] vec Vector to be destroyed
  */
-void destroy_vector(vector_t* vec);
+void free_vector(vector_t* vec);
 
-/*
- * Pushes a single item onto the back of the vector
- * Returns 1 on success, or 0 on failure
+/*!
+ * @brief     Pushes a single item onto the back of the vector
+ *
+ * @param[in] vec Vector to be expanded
+ *
+ * @param[in] item Pointer to item to be deep copied into the vector
+ *
+ * @return     1 on success, or 0 on failure
  */
 int push_vector(vector_t* vec, void* item);
 
-/*
- * Returns a pointer to the item in the vector at the given index
- * Returns NULL if index is invalid
+/*!
+ * @brief      Indexes the vector and returns a pointer to the item
+ *
+ * @param[in]  vec Vector to be indexed
+ *
+ * @param      index Position of the item in the vector
+ *
+ * @return     A pointer to the item, NULL if index is invalid
  */
 void* index_vector(vector_t* vec, size_t index);
 
