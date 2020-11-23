@@ -1,103 +1,116 @@
-/* test_vector.c */
-
-#include <stdint.h>
-#include <stdio.h>
-
 #include "test_framework.h"
-#include "vector.c"
+#include "vector.h"
 
-typedef int (*test_func_sig)(void);
+typedef int (*test_func_sig)();
 
-int test_roundup() {
-    ASSERT(roundup(0) == 0);
-    ASSERT(roundup(2) == 2);
-    ASSERT(roundup(3) == 4);
-    ASSERT(roundup(10) == 16);
-    ASSERT(roundup(65) == 128);
+int test_init_vector_of_size() {
+    printf("Running %s\n", __func__);
+    int result = SUCCESS;
 
-    ASSERT(roundup(SIZE_MAX) == 0);
-
-    return SUCCESS;
-}
-
-int test_make_vector_of_size() {
-    vector_t* test_vec = make_vector_of_size(1, 0);
+    vector_t* test_vec = init_vector_of_size(1, 0);
     ASSERT(test_vec->used == 0);
-    ASSERT(test_vec->item_bytes == 1);
+    ASSERT(test_vec->item_size == 1);
     ASSERT(test_vec->capacity == 0);
     ASSERT(test_vec->contents == NULL);
 
-    test_vec = make_vector_of_size(4, 100);
+    free_vector(test_vec);
+    test_vec = init_vector_of_size(4, 100);
     ASSERT(test_vec->used == 0);
-    ASSERT(test_vec->item_bytes == 4);
+    ASSERT(test_vec->item_size == 4);
     ASSERT(test_vec->capacity == 128);
     ASSERT(test_vec->contents != NULL);
 
-    return SUCCESS;
+    free_vector(test_vec);
+    test_vec = init_vector_of_size(0, 100);
+    ASSERT(test_vec == NULL);
+
+    return result;
 }
 
-int test_make_vector() {
-    vector_t* test_vec = make_vector(1);
+int test_init_vector() {
+    printf("Running %s\n", __func__);
+    int result = SUCCESS;
+
+    vector_t* test_vec = init_vector(1);
     ASSERT(test_vec->used == 0);
-    ASSERT(test_vec->item_bytes == 1);
+    ASSERT(test_vec->item_size == 1);
     ASSERT(test_vec->capacity == 0);
     ASSERT(test_vec->contents == NULL);
 
-    return SUCCESS;
+    free_vector(test_vec);
+    test_vec = init_vector(0);
+    ASSERT(test_vec == NULL);
+
+    return result;
 }
 
 int test_push_vector() {
-    vector_t vec = {
-        .contents = NULL, .used = 0, .capacity = 0, .item_bytes = 1};
+    printf("Running %s\n", __func__);
+    int result = SUCCESS;
+
+    vector_t* vec = init_vector(sizeof(char));
 
     char c = 'A';
+    char* words = "BEANS";
 
-    push_vector(&vec, (void*)&c);
+    push_vector(vec, (void*)&c);
 
-    ASSERT(vec.used == 1);
-    ASSERT(vec.capacity == 1);
-    ASSERT(vec.contents != NULL);
-    ASSERT(vec.contents[0] == c);
+    ASSERT_EQUAL(vec->used, 1);
+    ASSERT_EQUAL(vec->capacity, 1);
+    ASSERT_NOT_NULL(vec->contents);
+    ASSERT_EQUAL(vec->contents[0], c);
 
-    push_vector(&vec, (void*)&c);
+    push_vector(vec, (void*)&c);
 
-    ASSERT(vec.used == 2);
-    ASSERT(vec.capacity == 2);
-    ASSERT(vec.contents[1] == c);
+    ASSERT_EQUAL(vec->used, 2);
+    ASSERT_EQUAL(vec->capacity, 2);
+    ASSERT_EQUAL(vec->contents[1], c);
 
-    return SUCCESS;
+    free_vector(vec);
+    vec = init_vector(sizeof(char*));
+
+    push_vector(vec, (void*)&words);
+
+    ASSERT_EQUAL(vec->used, 1);
+    ASSERT_EQUAL(vec->capacity, 1);
+    ASSERT_NOT_NULL(vec->contents);
+
+    free_vector(vec);
+    return result;
 }
 
 int test_index_vector() {
+    printf("Running %s\n", __func__);
+    int result = SUCCESS;
+
     char contents[] = {1, 0, 0, 0, 2, 0, 0, 0};
     vector_t vec = {
-        .contents = (void*)contents, .used = 2, .capacity = 2, .item_bytes = 4};
+        .contents = (void*)contents, .used = 2, .capacity = 2, .item_size = 4};
 
     int* ret = (int*)index_vector(&vec, 0);
-    ASSERT(ret != NULL);
-    ASSERT(*ret == 1);
+    ASSERT_NOT_NULL(ret);
+    ASSERT_EQUAL(*ret, 1);
 
     ret = (int*)index_vector(&vec, 1);
-    ASSERT(ret != NULL);
-    ASSERT(*ret == 2);
+    ASSERT_NOT_NULL(ret);
+    ASSERT_EQUAL(*ret, 2);
 
     ret = (int*)index_vector(&vec, 10);
-    ASSERT(ret == NULL);
-    return SUCCESS;
+    ASSERT_IS_NULL(ret);
+
+    return result;
 }
 
-test_func_sig functions[] = {test_roundup, test_make_vector_of_size,
-                             test_make_vector, test_push_vector,
-                             test_index_vector};
+int test_vector() {
+    printf("Running %s\n", __func__);
+    int result = SUCCESS;
 
-int main() {
-    for (long unsigned int i = 0; i < sizeof(functions) / 8; i++) {
-        test_func_sig temp = functions[i];
-        int result = temp();
-        if (result == -1) {
-            printf("TEST %ld: SUCCESS\n", i + 1);
-        } else {
-            printf("TEST %ld: FAIL on line: %d\n", i + 1, result);
-        }
-    }
+    result += test_init_vector_of_size();
+    result += test_init_vector();
+    result += test_push_vector();
+    result += test_index_vector();
+
+    printf((result == SUCCESS) ? "Vector test SUCCESS\n"
+                               : "Vector test FAIL\n");
+    return result;
 }
