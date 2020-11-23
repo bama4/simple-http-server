@@ -6,7 +6,7 @@
 typedef struct {
     size_t capacity;
     size_t used;
-    size_t item_bytes;
+    size_t item_size;
     char* contents;
 } vector_t;
 

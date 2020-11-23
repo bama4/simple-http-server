@@ -1,4 +1,4 @@
-#include <assert.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -12,7 +12,7 @@
  * @return  The power of two found in the function
  */
 static size_t roundup(size_t base) {
-    if (base <= 0 || base >= (size_t)-1) {
+    if (base == 0 || base > SIZE_MAX / 2) {
         return 0;
     }
 
@@ -26,26 +26,29 @@ static size_t roundup(size_t base) {
 /*!
  * @brief    Initializes a new vector of a certain size
  *
- * @param    item_size Size of the items to be stored in the vector in bytes
+ * @param    item_size Size of the items to be stored in the vector in bytes,
+ *           must be greater than 0
  *
  * @param    init_size Initial size of vector in number of items
  *
- * @return   A pointer to the new vector
+ * @return   A pointer to the new vector, NULL when item_size is zero or memory
+ *           allocation fails
  */
-vector_t* init_vector_of_size(size_t item_bytes, size_t init_size) {
-    /* Makes no sense for the item_bytes to be 0 */
-    assert(item_bytes != 0);
+vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
+    if (item_size == 0) {
+        return NULL;
+    }
 
     vector_t* vec = malloc(sizeof(vector_t));
 
-    vec->item_bytes = item_bytes;
+    vec->item_size = item_size;
     vec->used = 0;
     size_t true_init_size = roundup(init_size);
     vec->capacity = true_init_size;
 
-    /* If they requests 0 bytes, no need to malloc any memory */
+    /* If they requested 0 bytes, no need to malloc any memory */
     if (init_size > 0) {
-        vec->contents = malloc(sizeof(char) * true_init_size * item_bytes);
+        vec->contents = malloc(sizeof(char) * true_init_size * item_size);
 
         /* Check for memory allocation failure */
         if (vec->contents == NULL) {
@@ -61,24 +64,14 @@ vector_t* init_vector_of_size(size_t item_bytes, size_t init_size) {
 /*!
  * @brief     Initializes a new vector of size 0
  *
- * @param     item_size Size of the items to be stored in the vector in bytes
+ * @param     item_size Size of the items to be stored in the vector in bytes,
+ *            must be greater than 0
  *
- * @return    A pointer to the new vector
+ * @return    A pointer to the new vector, NULL on allocation failure or when
+ *            item_size is 0
  */
-vector_t* init_vector(size_t item_bytes) {
-    return make_vector_of_size(item_bytes, 0);
-}
-
-/*!
- * @brief     Destroys and frees the memory created by make_vector
- *
- * @param[in] vec Vector to be destroyed
- */
-void free_vector(vector_t* vec) {
-    if (vec->capacity > 0)
-        free(vec->contents);
-
-    free(vec);
+vector_t* init_vector(size_t item_size) {
+    return init_vector_of_size(item_size, 0);
 }
 
 /*!
@@ -87,6 +80,8 @@ void free_vector(vector_t* vec) {
  * @param[in] vec Vector to be extended
  *
  * @param     change Amount to grow the vector by
+ *
+ * @return    Returns 1 on success or 0 on failure
  */
 static int extend_vector(vector_t* vec, size_t change) {
     if (vec->used + change <= vec->capacity) {
@@ -94,7 +89,7 @@ static int extend_vector(vector_t* vec, size_t change) {
     }
 
     size_t n_items = roundup(vec->used + change);
-    char* new_buffer = realloc(vec->contents, n_items * vec->item_bytes);
+    char* new_buffer = realloc(vec->contents, n_items * vec->item_size);
     if (new_buffer == NULL) {
         return 0;
     }
@@ -105,19 +100,19 @@ static int extend_vector(vector_t* vec, size_t change) {
 }
 
 /*!
- * @brief     Pushes a single item onto the back of the vector
+ * @brief      Pushes a single item onto the back of the vector
  *
- * @param[in] vec Vector to be expanded
+ * @param[in]  vec Vector to be expanded
  *
- * @param[in] item Pointer to item to be deep copied into the vector
+ * @param[in]  item Pointer to the item to be deep copied into the vector
  *
  * @return     1 on success, or 0 on failure
  */
 int push_vector(vector_t* vec, void* item) {
-    if (extend_vector(vec, 1) == 0) {
+    if (!extend_vector(vec, 1)) {
         return 0;
     }
-    memcpy(&vec->contents[vec->used * vec->item_bytes], item, vec->item_bytes);
+    memcpy(&vec->contents[vec->used * vec->item_size], item, vec->item_size);
     vec->used += 1;
     return 1;
 }
@@ -135,5 +130,17 @@ void* index_vector(vector_t* vec, size_t index) {
     if (index >= vec->used)
         return NULL;
 
-    return (void*)&vec->contents[index * vec->item_bytes];
+    return (void*)(&vec->contents[index * vec->item_size]);
+}
+
+/*!
+ * @brief     Destroys and frees the memory created by make_vector
+ *
+ * @param[in] vec Vector to be destroyed
+ */
+void free_vector(vector_t* vec) {
+    if (vec->contents != NULL)
+        free(vec->contents);
+
+    free(vec);
 }
