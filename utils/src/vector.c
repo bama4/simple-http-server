@@ -5,7 +5,7 @@
 #include "vector.h"
 
 /*!
- * @brief	Finds the smallest power of two greater than a number
+ * @brief	Finds the smallest power of two greater than a given number
  *
  * @param	base The base number
  *
@@ -40,13 +40,19 @@ vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
     }
 
     vector_t* vec = malloc(sizeof(vector_t));
+    if (vec == NULL) {
+      return NULL;
+    }
 
     vec->item_size = item_size;
     vec->used = 0;
     size_t true_init_size = roundup(init_size);
     vec->capacity = true_init_size;
 
-    /* If they requested 0 bytes, no need to malloc any memory */
+    /* 
+     * If they requested 0 bytes, no need to malloc any memory 
+     * Realloc will act like malloc if the given pointer is null
+     */
     if (init_size > 0) {
         vec->contents = malloc(sizeof(char) * true_init_size * item_size);
 
@@ -77,11 +83,11 @@ vector_t* init_vector(size_t item_size) {
 /*!
  * @brief	  Extends the vector by a given amount
  *
- * @param[in] vec Vector to be extended
+ * @param[in]     vec Vector to be extended
  *
- * @param     change Amount to grow the vector by
+ * @param         change Amount to grow the vector by
  *
- * @return    Returns 1 on success or 0 on failure
+ * @return        Returns 1 on success or 0 on failure
  */
 static int extend_vector(vector_t* vec, size_t change) {
     if (vec->used + change <= vec->capacity) {
