@@ -11,38 +11,35 @@ typedef struct {
 } vector_t;
 
 /*!
- * @brief    Initializes a new vector of size 0
+ * @brief     Initializes a new vector of size 0
  *
- * @param    item_size Size of the items to be stored in the vector in bytes
+ * @param     item_size Size of the items to be stored in the vector in bytes,
+ *            must be greater than 0
  *
- * @return   A pointer to the new vector
+ * @return    A pointer to the new vector, NULL on allocation failure or when
+ *            item_size is 0
  */
 vector_t* init_vector(size_t item_size);
 
 /*!
  * @brief    Initializes a new vector of a certain size
  *
- * @param    item_size Size of the items to be stored in the vector in bytes
+ * @param    item_size Size of the items to be stored in the vector in bytes,
+ *           must be greater than 0
  *
  * @param    init_size Initial size of vector in number of items
  *
- * @return   A pointer to the new vector
+ * @return   A pointer to the new vector, NULL when item_size is zero or memory
+ *           allocation fails
  */
 vector_t* init_vector_of_size(size_t item_size, size_t init_size);
 
 /*!
- * @brief     Destroys and frees the memory created by make_vector
+ * @brief      Pushes a single item onto the back of the vector
  *
- * @param[in] vec Vector to be destroyed
- */
-void free_vector(vector_t* vec);
-
-/*!
- * @brief     Pushes a single item onto the back of the vector
+ * @param[in]  vec Vector to be expanded
  *
- * @param[in] vec Vector to be expanded
- *
- * @param[in] item Pointer to item to be deep copied into the vector
+ * @param[in]  item Pointer to the item to be deep copied into the vector
  *
  * @return     1 on success, or 0 on failure
  */
@@ -59,4 +56,10 @@ int push_vector(vector_t* vec, void* item);
  */
 void* index_vector(vector_t* vec, size_t index);
 
+/*!
+ * @brief     Destroys and frees the memory created by make_vector
+ *
+ * @param[in] vec Vector to be destroyed
+ */
+void free_vector(vector_t* vec);
 #endif /* VECTOR_H */
