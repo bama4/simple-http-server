@@ -40,6 +40,7 @@ vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
     }
 
     vector_t* vec = malloc(sizeof(vector_t));
+
     if (vec == NULL) {
         return NULL;
     }
@@ -58,6 +59,7 @@ vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
 
         /* Check for memory allocation failure */
         if (vec->_contents == NULL) {
+	    free(vec);
             return NULL;
         }
     } else {
