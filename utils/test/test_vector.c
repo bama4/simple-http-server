@@ -11,14 +11,14 @@ int test_init_vector_of_size() {
     ASSERT(test_vec->used == 0);
     ASSERT(test_vec->item_size == 1);
     ASSERT(test_vec->capacity == 0);
-    ASSERT(test_vec->contents == NULL);
+    ASSERT(test_vec->_contents == NULL);
 
     free_vector(test_vec);
     test_vec = init_vector_of_size(4, 100);
     ASSERT(test_vec->used == 0);
     ASSERT(test_vec->item_size == 4);
     ASSERT(test_vec->capacity == 128);
-    ASSERT(test_vec->contents != NULL);
+    ASSERT(test_vec->_contents != NULL);
 
     free_vector(test_vec);
     test_vec = init_vector_of_size(0, 100);
@@ -35,7 +35,7 @@ int test_init_vector() {
     ASSERT(test_vec->used == 0);
     ASSERT(test_vec->item_size == 1);
     ASSERT(test_vec->capacity == 0);
-    ASSERT(test_vec->contents == NULL);
+    ASSERT(test_vec->_contents == NULL);
 
     free_vector(test_vec);
     test_vec = init_vector(0);
@@ -57,14 +57,14 @@ int test_push_vector() {
 
     ASSERT_EQUAL(vec->used, 1);
     ASSERT_EQUAL(vec->capacity, 1);
-    ASSERT_NOT_NULL(vec->contents);
-    ASSERT_EQUAL(vec->contents[0], c);
+    ASSERT_NOT_NULL(vec->_contents);
+    ASSERT_EQUAL(vec->_contents[0], c);
 
     push_vector(vec, (void*)&c);
 
     ASSERT_EQUAL(vec->used, 2);
     ASSERT_EQUAL(vec->capacity, 2);
-    ASSERT_EQUAL(vec->contents[1], c);
+    ASSERT_EQUAL(vec->_contents[1], c);
 
     free_vector(vec);
     vec = init_vector(sizeof(char*));
@@ -73,7 +73,7 @@ int test_push_vector() {
 
     ASSERT_EQUAL(vec->used, 1);
     ASSERT_EQUAL(vec->capacity, 1);
-    ASSERT_NOT_NULL(vec->contents);
+    ASSERT_NOT_NULL(vec->_contents);
 
     free_vector(vec);
     return result;
@@ -85,7 +85,7 @@ int test_index_vector() {
 
     char contents[] = {1, 0, 0, 0, 2, 0, 0, 0};
     vector_t vec = {
-        .contents = (void*)contents, .used = 2, .capacity = 2, .item_size = 4};
+        ._contents = (void*)contents, .used = 2, .capacity = 2, .item_size = 4};
 
     int* ret = (int*)index_vector(&vec, 0);
     ASSERT_NOT_NULL(ret);

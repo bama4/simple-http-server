@@ -7,7 +7,7 @@ typedef struct {
     size_t capacity;
     size_t used;
     size_t item_size;
-    char* contents;
+    char* _contents;
 } vector_t;
 
 /*!
@@ -55,6 +55,29 @@ int push_vector(vector_t* vec, void* item);
  * @return     A pointer to the item, NULL if index is invalid
  */
 void* index_vector(vector_t* vec, size_t index);
+
+/*!
+ * @brief      Returns the byte in the vector at the given index
+ *
+ * @param[in]  vec Vector to be indexed
+ *
+ * @param[out] byte The value of the index
+ *
+ * @param      index Position of the bytes in the contents of the vector
+ *
+ * @return     1 on success, 0 on failure
+ */
+int index_byte(vector_t* vec, char* byte, size_t index);
+
+/*!
+ * @brief      Returns a pointer the to the contents of the vector.  Ownership
+ * is maintained by the vector.
+ *
+ * @param[in]  vec The vector
+ *
+ * @return     A pointer to the data stored inside the vector
+ */
+void* get_contents(vector_t* vec);
 
 /*!
  * @brief     Destroys and frees the memory created by make_vector

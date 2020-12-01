@@ -41,7 +41,7 @@ vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
 
     vector_t* vec = malloc(sizeof(vector_t));
     if (vec == NULL) {
-      return NULL;
+        return NULL;
     }
 
     vec->item_size = item_size;
@@ -49,19 +49,19 @@ vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
     size_t true_init_size = roundup(init_size);
     vec->capacity = true_init_size;
 
-    /* 
-     * If they requested 0 bytes, no need to malloc any memory 
+    /*
+     * If they requested 0 bytes, no need to malloc any memory
      * Realloc will act like malloc if the given pointer is null
      */
     if (init_size > 0) {
-        vec->contents = malloc(sizeof(char) * true_init_size * item_size);
+        vec->_contents = malloc(sizeof(char) * true_init_size * item_size);
 
         /* Check for memory allocation failure */
-        if (vec->contents == NULL) {
+        if (vec->_contents == NULL) {
             return NULL;
         }
     } else {
-        vec->contents = NULL;
+        vec->_contents = NULL;
     }
 
     return vec;
@@ -95,12 +95,12 @@ static int extend_vector(vector_t* vec, size_t change) {
     }
 
     size_t n_items = roundup(vec->used + change);
-    char* new_buffer = realloc(vec->contents, n_items * vec->item_size);
+    char* new_buffer = realloc(vec->_contents, n_items * vec->item_size);
     if (new_buffer == NULL) {
         return 0;
     }
 
-    vec->contents = new_buffer;
+    vec->_contents = new_buffer;
     vec->capacity = n_items;
     return 1;
 }
@@ -118,7 +118,7 @@ int push_vector(vector_t* vec, void* item) {
     if (!extend_vector(vec, 1)) {
         return 0;
     }
-    memcpy(&vec->contents[vec->used * vec->item_size], item, vec->item_size);
+    memcpy(&vec->_contents[vec->used * vec->item_size], item, vec->item_size);
     vec->used += 1;
     return 1;
 }
@@ -136,7 +136,7 @@ void* index_vector(vector_t* vec, size_t index) {
     if (index >= vec->used)
         return NULL;
 
-    return (void*)(&vec->contents[index * vec->item_size]);
+    return (void*)(&vec->_contents[index * vec->item_size]);
 }
 
 /*!
@@ -145,8 +145,37 @@ void* index_vector(vector_t* vec, size_t index) {
  * @param[in] vec Vector to be destroyed
  */
 void free_vector(vector_t* vec) {
-    if (vec->contents != NULL)
-        free(vec->contents);
+    if (vec->_contents != NULL)
+        free(vec->_contents);
 
     free(vec);
 }
+
+/*!
+ * @brief      Returns the byte in the vector at the given index
+ *
+ * @param[in]  vec Vector to be indexed
+ *
+ * @param[out] byte The value of the index
+ *
+ * @param      index Position of the bytes in the contents of the vector
+ *
+ * @return     1 on success, 0 on failure
+ */
+int index_byte(vector_t* vec, char* byte, size_t index) {
+    if (index >= vec->used)
+        return 0;
+
+    *byte = vec->_contents[index];
+    return 1;
+}
+
+/*!
+ * @brief      Returns a pointer the to the contents of the vector.  Ownership
+ * is maintained by the vector.
+ *
+ * @param[in]  vec The vector
+ *
+ * @return     A pointer to the data stored inside the vector
+ */
+void* get_contents(vector_t* vec) { return (void*)vec->_contents; }
