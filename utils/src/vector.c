@@ -158,18 +158,15 @@ void free_vector(vector_t* vec) {
  *
  * @param[in]  vec Vector to be indexed
  *
- * @param[out] byte The value of the index
- *
  * @param      index Position of the bytes in the contents of the vector
  *
- * @return     1 on success, 0 on failure
+ * @return     A pointer to the bytes, NULL if invalid access
  */
-int index_byte(vector_t* vec, char* byte, size_t index) {
+char* index_byte(vector_t* vec, size_t index) {
     if (index >= vec->used)
-        return 0;
+        return NULL;
 
-    *byte = vec->_contents[index];
-    return 1;
+    return &vec->_contents[index];
 }
 
 /*!
