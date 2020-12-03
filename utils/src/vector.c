@@ -7,7 +7,8 @@
 /*!
  * @brief	Finds the smallest power of two greater than a given number
  *
- * @param	base The given number, must be greater than 0, but less than half the maximum size of SIZE_MAX
+ * @param	base The given number, must be greater than 0, but less than
+ * half the maximum size of SIZE_MAX
  *
  * @return      The power of two found in the function, or 0 if input is invalid
  */
@@ -59,7 +60,7 @@ vector_t* init_vector_of_size(size_t item_size, size_t init_size) {
 
         /* Check for memory allocation failure */
         if (vec->_contents == NULL) {
-	    free(vec);
+            free(vec);
             return NULL;
         }
     } else {
@@ -92,6 +93,9 @@ vector_t* init_vector(size_t item_size) {
  * @return        Returns 0 on success or -1 on failure
  */
 static int extend_vector(vector_t* vec, size_t change) {
+    if (vec == NULL) {
+        return -1;
+    }
     if (vec->used + change <= vec->capacity) {
         return 0;
     }
@@ -117,6 +121,10 @@ static int extend_vector(vector_t* vec, size_t change) {
  * @return     0 on success, or -1 on failure
  */
 int push_vector(vector_t* vec, void* item) {
+    if (vec == NULL) {
+        return -1;
+    }
+
     if (extend_vector(vec, 1) < 0) {
         return -1;
     }
@@ -135,6 +143,9 @@ int push_vector(vector_t* vec, void* item) {
  * @return     A pointer to the item, NULL if index is invalid
  */
 void* index_vector(vector_t* vec, size_t index) {
+    if (vec == NULL) {
+        return NULL;
+    }
     if (index >= vec->used)
         return NULL;
 
@@ -147,6 +158,9 @@ void* index_vector(vector_t* vec, size_t index) {
  * @param[in] vec Vector to be destroyed
  */
 void free_vector(vector_t* vec) {
+    if (vec == NULL) {
+        return;
+    }
     if (vec->_contents != NULL)
         free(vec->_contents);
 
@@ -163,6 +177,9 @@ void free_vector(vector_t* vec) {
  * @return     A pointer to the bytes, NULL if invalid access
  */
 char* index_byte(vector_t* vec, size_t index) {
+    if (vec == NULL) {
+        return NULL;
+    }
     if (index >= vec->used)
         return NULL;
 
@@ -177,4 +194,9 @@ char* index_byte(vector_t* vec, size_t index) {
  *
  * @return     A pointer to the data stored inside the vector
  */
-void* get_contents(vector_t* vec) { return (void*)vec->_contents; }
+void* get_contents(vector_t* vec) {
+    if (vec == NULL) {
+        return NULL;
+    }
+    return (void*)vec->_contents;
+}
