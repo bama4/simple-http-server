@@ -105,11 +105,17 @@ int test_index_vector() {
     int* ret = (int*)index_vector(vec, 0);
     ASSERT_NOT_NULL(ret);
     ASSERT_EQUAL(*ret, 1);
+    ASSERT_EQUAL(vec->used, sizeof(contents));
+    ASSERT_EQUAL(vec->capacity, sizeof(contents));
+    ASSERT_EQUAL(vec->item_size, 4);
 
     // Test indexing second item
     ret = (int*)index_vector(vec, 1);
     ASSERT_NOT_NULL(ret);
     ASSERT_EQUAL(*ret, 2);
+    ASSERT_EQUAL(vec->used, sizeof(contents));
+    ASSERT_EQUAL(vec->capacity, sizeof(contents));
+    ASSERT_EQUAL(vec->item_size, 4);
 
     // Test indexing invalid item
     ret = (int*)index_vector(vec, 10);
