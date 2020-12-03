@@ -7,9 +7,9 @@
 /*!
  * @brief	Finds the smallest power of two greater than a given number
  *
- * @param	base The base number
+ * @param	base The given number, must be greater than 0, but less than half the maximum size of SIZE_MAX
  *
- * @return  The power of two found in the function
+ * @return      The power of two found in the function, or 0 if input is invalid
  */
 static size_t roundup(size_t base) {
     if (base == 0 || base > SIZE_MAX / 2) {
@@ -89,22 +89,22 @@ vector_t* init_vector(size_t item_size) {
  *
  * @param         change Amount to grow the vector by
  *
- * @return        Returns 1 on success or 0 on failure
+ * @return        Returns 0 on success or -1 on failure
  */
 static int extend_vector(vector_t* vec, size_t change) {
     if (vec->used + change <= vec->capacity) {
-        return 1;
+        return 0;
     }
 
     size_t n_items = roundup(vec->used + change);
     char* new_buffer = realloc(vec->_contents, n_items * vec->item_size);
     if (new_buffer == NULL) {
-        return 0;
+        return -1;
     }
 
     vec->_contents = new_buffer;
     vec->capacity = n_items;
-    return 1;
+    return 0;
 }
 
 /*!
@@ -114,15 +114,15 @@ static int extend_vector(vector_t* vec, size_t change) {
  *
  * @param[in]  item Pointer to the item to be deep copied into the vector
  *
- * @return     1 on success, or 0 on failure
+ * @return     0 on success, or -1 on failure
  */
 int push_vector(vector_t* vec, void* item) {
-    if (!extend_vector(vec, 1)) {
-        return 0;
+    if (extend_vector(vec, 1) < 0) {
+        return -1;
     }
     memcpy(&vec->_contents[vec->used * vec->item_size], item, vec->item_size);
     vec->used += 1;
-    return 1;
+    return 0;
 }
 
 /*!
