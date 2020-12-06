@@ -18,6 +18,12 @@
         return FAIL;                                                           \
     }
 
+#define ASSERT_EQUAL(expr, expr2)                                              \
+    if ((expr) != (expr2)) {                                                   \
+        printf("ASSERT_EQUAL failed on line %d\n", __LINE__);                  \
+        return FAIL;                                                           \
+    }
+
 #define ASSERT_IS_NULL(var)                                                    \
     if (var != NULL) {                                                         \
         printf("ASSERT_IS_NULL failed on line %d\n", __LINE__);                \
@@ -29,5 +35,7 @@
         printf("ASSERT_NOT_NULL failed on line %d\n", __LINE__);               \
         return FAIL;                                                           \
     }
+
+int test_vector();
 
 #endif /*TEST_FRAMEWORK_H_*/
