@@ -121,6 +121,9 @@ int test_index_vector() {
     ret = (int*)index_vector(vec, 10);
     ASSERT_IS_NULL(ret);
 
+    vec->_contents = NULL;
+    free_vector(vec);
+
     return result;
 }
 
