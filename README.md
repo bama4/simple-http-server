@@ -8,9 +8,11 @@ A simple lightweight HTTP server in C
 * CMake 3.10 or higher
 * GNU Make or another CMake compatible build tool 
 * C11 or higher compiler
+* Doxygen
 
 #### Steps
 
+##### Building the Project
 First, clone the repository.
 
 ```
@@ -38,3 +40,25 @@ make
 ```
 
 The executable should be in the folder ``bin/`` and should be called simple_http_server
+
+##### Building the Tests
+
+Create a _build/_ directory to store the contents of the build process.
+
+```
+mkdir build/
+cd build/
+```
+
+Then run CMake to generate the Makefile for the tests
+
+```
+cmake -DTEST=ON ../
+```
+
+Run the tests associated with the package
+
+```
+ctest --verbose
+```
+

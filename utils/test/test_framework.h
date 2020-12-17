@@ -6,6 +6,7 @@
 #define SUCCESS 0
 #define FAIL -1
 
+// Asserts
 #define ASSERT(expr)                                                           \
     if (!(expr)) {                                                             \
         printf("ASSERT failed on line %d\n", __LINE__);                        \
@@ -15,12 +16,6 @@
 #define ASSERT_FALSE(expr)                                                     \
     if ((expr)) {                                                              \
         printf("ASSERT_FALSE failed on line %d\n", __LINE__);                  \
-        return FAIL;                                                           \
-    }
-
-#define ASSERT_EQUAL(expr, expr2)                                              \
-    if ((expr) != (expr2)) {                                                   \
-        printf("ASSERT_EQUAL failed on line %d\n", __LINE__);                  \
         return FAIL;                                                           \
     }
 
@@ -36,6 +31,16 @@
         return FAIL;                                                           \
     }
 
-int test_vector();
+#define ASSERT_EQUAL(var1, var2)                                               \
+    if (var1 != var2) {                                                        \
+        printf("ASSERT_EQUAL failed on line %d\n", __LINE__);                  \
+        return FAIL;                                                           \
+    }
+
+#define ASSERT_NOT_EQUAL(var1, var2)                                           \
+    if (var1 == var2) {                                                        \
+        printf("ASSERT_NOT_EQUAL failed on line %d\n", __LINE__);              \
+        return FAIL;                                                           \
+    }
 
 #endif /*TEST_FRAMEWORK_H_*/
