@@ -18,6 +18,7 @@ int main() {
 
     // Run all vector tests
     result &= test_vector();
+    result &= test_hashmap();
 
     return result;
 }
