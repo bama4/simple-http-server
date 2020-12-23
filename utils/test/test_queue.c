@@ -25,12 +25,12 @@ int test_enqueue() {
     queue_t *test_queue_t = init_queue();
 
     // Add one item
-    enqueue(&test_queue_t, (void *)queue_data[0]);
+    enqueue(test_queue_t, (void *)queue_data[0]);
     ASSERT_EQUAL(get_tail(test_queue_t->_list), (void *)queue_data[0]);
     ASSERT_EQUAL(1, test_queue_t->size);
 
     // Add another item
-    enqueue(&test_queue_t, (void *)queue_data[1]);
+    enqueue(test_queue_t, (void *)queue_data[1]);
     ASSERT_EQUAL(2, test_queue_t->size);
     ASSERT_EQUAL(remove_data(test_queue_t->_list, (void *)queue_data[1]),
                  (void *)queue_data[1])
@@ -50,9 +50,9 @@ int test_dequeue() {
     queue_t *test_queue_t = init_queue();
 
     // Populate queue
-    enqueue(&test_queue_t, (void *)queue_data[0]);
-    enqueue(&test_queue_t, (void *)queue_data[1]);
-    enqueue(&test_queue_t, (void *)queue_data[2]);
+    enqueue(test_queue_t, (void *)queue_data[0]);
+    enqueue(test_queue_t, (void *)queue_data[1]);
+    enqueue(test_queue_t, (void *)queue_data[2]);
 
     // Remove one item
     ASSERT_EQUAL(dequeue(test_queue_t), (void *)queue_data[0])
@@ -85,9 +85,9 @@ int test_front() {
     queue_t *test_queue_t = init_queue();
 
     // Populate queue
-    enqueue(&test_queue_t, (void *)queue_data[0]);
-    enqueue(&test_queue_t, (void *)queue_data[1]);
-    enqueue(&test_queue_t, (void *)queue_data[2]);
+    enqueue(test_queue_t, (void *)queue_data[0]);
+    enqueue(test_queue_t, (void *)queue_data[1]);
+    enqueue(test_queue_t, (void *)queue_data[2]);
 
     // Test front
     ASSERT_EQUAL(front(test_queue_t), (void *)queue_data[0]);
@@ -119,7 +119,7 @@ int test_free_queue() {
     queue_t *test_queue_t = init_queue();
 
     // Populate queue
-    enqueue(&test_queue_t, (void *)queue_data[0]);
+    enqueue(test_queue_t, (void *)queue_data[0]);
 
     // Test queue deleted
     free_queue(test_queue_t);

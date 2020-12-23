@@ -25,19 +25,19 @@ int test_get_tail() {
 
     // Test tail updated on first insert
     insert_data(test_list, (void *)linked_list_data[0]);
-    ASSERT_EQUAL(test_list->head, test_list->tail);
-    ASSERT_EQUAL(test_list->tail->data, get_tail(test_list));
+    ASSERT_EQUAL(test_list->head, test_list->_tail);
+    ASSERT_EQUAL(test_list->_tail->data, get_tail(test_list));
 
     // Test tail the same on second insert
     insert_data(test_list, (void *)linked_list_data[1]);
-    ASSERT_NOT_EQUAL(test_list->head, test_list->tail);
-    ASSERT_EQUAL(test_list->tail->data, get_tail(test_list));
+    ASSERT_NOT_EQUAL(test_list->head, test_list->_tail);
+    ASSERT_EQUAL(test_list->_tail->data, get_tail(test_list));
 
     // Test tail updated on removal of item
     insert_data(test_list, (void *)linked_list_data[2]);
     remove_data(test_list, (void *)linked_list_data[0]);
-    ASSERT_EQUAL(test_list->tail->data, (void *)linked_list_data[1]);
-    ASSERT_EQUAL(test_list->tail->data, get_tail(test_list));
+    ASSERT_EQUAL(test_list->_tail->data, (void *)linked_list_data[1]);
+    ASSERT_EQUAL(test_list->_tail->data, get_tail(test_list));
 
     // Cleanup
     free_list(test_list);
@@ -57,7 +57,7 @@ int test_insert_data() {
     insert_data(test_list, (void *)linked_list_data[0]);
     ASSERT_NOT_NULL(test_list->head);
     ASSERT_EQUAL(test_list->head->data, (void *)linked_list_data[0]);
-    ASSERT_EQUAL(test_list->head, test_list->tail);
+    ASSERT_EQUAL(test_list->head, test_list->_tail);
 
     // Test insert at non-empty head
     insert_data(test_list, (void *)linked_list_data[1]);

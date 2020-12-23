@@ -31,22 +31,18 @@ queue_t *init_queue() {
  * @param[in]      queue  The queue
  * @param[in]      data   The data to insert
  */
-void enqueue(queue_t **queue, void *data) {
+void enqueue(queue_t *queue, void *data) {
 
     // Check for NULL
     if (queue == NULL) {
         return;
     }
 
-    if (*queue == NULL) {
-        return;
-    }
-
     // Add data to queue list
-    insert_data((*queue)->_list, data);
+    insert_data(queue->_list, data);
 
     // Increment size
-    (*queue)->size++;
+    queue->size++;
 }
 
 /**

@@ -48,8 +48,8 @@ void *get_tail(linked_list_t *list) {
     }
 
     // Return tail data if not NULL
-    if (list->tail != NULL) {
-        return list->tail->data;
+    if (list->_tail != NULL) {
+        return list->_tail->data;
     }
 
     return NULL;
@@ -70,7 +70,7 @@ node_t *insert_data(linked_list_t *list, void *data) {
         return NULL;
     }
 
-    node_t *new_node = (node_t *)calloc(1, sizeof(node_t));
+    node_t *new_node = malloc(sizeof(node_t));
 
     // Check for NULL
     if (new_node == NULL) {
@@ -82,7 +82,7 @@ node_t *insert_data(linked_list_t *list, void *data) {
         list->head = new_node;
         list->head->next = NULL;
         list->head->data = data;
-        list->tail = list->head;
+        list->_tail = list->head;
     } else {
         // Insert as new head
         node_t *temp = list->head;
@@ -125,8 +125,8 @@ void *remove_data(linked_list_t *list, void *data) {
             node_t *new_next = curr_node->next;
 
             // Update tail if necessary
-            if (curr_node == list->tail) {
-                list->tail = (new_next != NULL) ? new_next : prev_node;
+            if (curr_node == list->_tail) {
+                list->_tail = (new_next != NULL) ? new_next : prev_node;
             }
 
             // If data is at head
@@ -171,22 +171,22 @@ void *remove_tail(linked_list_t *list) {
     node_t *curr_node = list->head;
 
     // Check if only one head node in list
-    if (list->head == list->tail) {
+    if (list->head == list->_tail) {
         data = list->head->data;
         free(list->head);
         list->head = NULL;
-        list->tail = NULL;
+        list->_tail = NULL;
         return data;
     }
 
     // If there is more than one node in list
     while (curr_node != NULL) {
-        if (curr_node == list->tail) {
-            list->tail = prev_node;
+        if (curr_node == list->_tail) {
+            list->_tail = prev_node;
             data = curr_node->data;
             free(curr_node);
             curr_node = NULL;
-            list->tail->next = NULL;
+            list->_tail->next = NULL;
             break;
         }
         prev_node = curr_node;
@@ -225,6 +225,6 @@ void free_list(linked_list_t *list) {
     }
 
     list->head = NULL;
-    list->tail = NULL;
+    list->_tail = NULL;
     free(list);
 }

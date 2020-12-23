@@ -12,9 +12,9 @@ typedef struct node {
 /**
  * Defines a linked list
  */
-typedef struct linked_list {
+typedef struct {
     node_t *head;
-    node_t *tail;
+    node_t *_tail;
 } linked_list_t;
 
 /**
