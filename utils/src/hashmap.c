@@ -1,4 +1,6 @@
 #include "hashmap.h"
+#include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -30,6 +32,7 @@ hashmap_t *init_hashmap(size_t item_size) {
 
 /**
  * @brief      Converts the data to an unsigned integer value
+ * the map
  *
  * @param      map  The map to calculate the hash value
  * @param      data     The data
@@ -37,22 +40,32 @@ hashmap_t *init_hashmap(size_t item_size) {
  *
  * @return     Returns the hash value, else -1 if unsuccessful
  */
-int hashval(hashmap *map, char *data, size_t len) {
+int hashval(hashmap_t *map, char *data, size_t len) {
     if (data == NULL) {
         return -1;
     }
     int value = 0;
-    for (int ctr = 0; ctr < len; ctr++) {
-        value += (int)(data[ctr]);
+    for (unsigned int ctr = 0; ctr < len; ctr++) {
+        value += (char)(data[ctr]);
     }
+    printf("%d\n", value);
     value = value % map->capacity;
+    unsigned int iter_count = 0;
 
-    while (map->_contents[value].data != NULL ||
-           map->_contents[value].is_deleted == 0) {
-        value = 0;
+    // Keep iterating until there is a free or deleted space
+    while (!(map->_contents[value].data == NULL ||
+             map->_contents[value].is_deleted == 0)) {
 
-        // Check for collision
-        if (map->)
+        // There is a collision, recalculate value
+        value += (value + 1) % map->capacity;
+        iter_count += 1;
+
+        // No place found
+        // This case should not be reached if capacity is limited
+        if (iter_count == map->capacity) {
+            value = -1;
+            break;
+        }
     }
     return value;
 }
@@ -61,7 +74,8 @@ int hashval(hashmap *map, char *data, size_t len) {
  * @brief      Inserts the given map (key value pair) into the given hashmap
  *
  * @param      map   The map
- * @param      pair  The pair
+ * @param      pair  The pair (where 'key' is the buffer and 'value' is the
+ * length)
  *
  * @return     Returns the index that the pair was inserted to if success, else
  * -1
@@ -74,7 +88,9 @@ int insert_hashmap(hashmap_t *map, map_t *pair) {
     // Check if first insertion
     if (map->_contents == NULL) {
         // initialize _contents
-        map->_contents = (entry_t *)calloc(map->capacity, sizeof(entry_t));
+        if ((map->_contents = calloc(map->capacity, sizeof(entry_t))) == NULL) {
+            return -1;
+        }
 
         // Check if used / capacity >= MAX_LOAD_CAPACITY
     } else if ((map->used / (map->capacity * 1.0)) >= MAX_LOAD_CAPACITY) {
@@ -94,12 +110,16 @@ int insert_hashmap(hashmap_t *map, map_t *pair) {
         }
 
         entry_t *old_contents = map->_contents;
-        entry_t *new_contents = (entry_t *)calloc(new_size, sizeof(entry_t));
-        // copy memory contents to newly allocated memory
+        entry_t *new_contents = NULL;
+        if ((new_contents = calloc(new_size, sizeof(entry_t))) == NULL) {
+            return -1;
+        }
+
+        // Copy memory contents to newly allocated memory
         entry_t *dst = memcpy(new_contents, old_contents, map->used);
 
         if (dst == NULL) {
-            // Failed to increase the capacity, calloc failed
+            // Failed to increase the capacity, memcpy failed
             return -1;
         }
         // Free old contents buffer
@@ -107,18 +127,21 @@ int insert_hashmap(hashmap_t *map, map_t *pair) {
         map->_contents = NULL;
 
         map->_contents = new_contents;
+        map->capacity = new_size;
     }
 
-    // insert item
-    size_t idx = 0;
-
-    idx = hashval(map, pair->key);
+    int idx = 0;
+    // Calculate hash value for item, treats value as length
+    int len = *((int *)pair->value);
+    idx = hashval(map, pair->key, len);
     if (idx == -1) {
-        // There is an issue with the data
+        // There is an issue with inserting the data
         return -1;
     }
 
     map->_contents[idx].data = pair->value;
+    map->_contents[idx].is_deleted = 0;
+    map->used += 1;
     return idx;
 }
 

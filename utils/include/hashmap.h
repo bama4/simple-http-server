@@ -32,7 +32,7 @@ hashmap_t *init_hashmap(size_t item_size);
  *
  * @return     Returns the hash value, else -1 if unsuccessful
  */
-int hashval(hashmap_t *map, char *data, size_t len, size_t max_val);
+int hashval(hashmap_t *map, char *data, size_t len);
 
 /**
  * @brief      Inserts the given map (key value pair) into the given hashmap
