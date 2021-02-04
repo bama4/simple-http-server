@@ -139,9 +139,13 @@ int insert_hashmap(hashmap_t *map, map_t *pair) {
         return -1;
     }
 
+    // Only count new space taken as additional used
+    if (!map->_contents[idx].is_deleted) {
+        map->used += 1;
+    }
+
     map->_contents[idx].data = pair->value;
     map->_contents[idx].is_deleted = 0;
-    map->used += 1;
     return idx;
 }
 

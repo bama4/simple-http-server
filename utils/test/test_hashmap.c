@@ -65,7 +65,7 @@ int test_insert_hashmap() {
     ASSERT(memcmp((char *)test_map->_contents[idx].data, "000", sizes[2]));
     ASSERT_EQUAL(test_map->used, 3);
 
-    // Insert one item (collision)
+    // Insert one item (non-collision)
     sizes[3] = 2;
     idx = insert_hashmap(test_map, &test4);
     printf("num %d\n", idx);
@@ -74,7 +74,85 @@ int test_insert_hashmap() {
     ASSERT(memcmp((char *)test_map->_contents[idx].data, "5", sizes[3]));
     ASSERT_EQUAL(test_map->used, 4);
 
-    // Delete entry and test entry replaced
+    // Delete entry and test re insert entry replaced
+    test_map->_contents[0].is_deleted = 1;
+    idx = insert_hashmap(test_map, &test2);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, 0);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "00", sizes[1]));
+    ASSERT_EQUAL(test_map->used, 4);
+
+    // Free hashmap
+    free_hashmap(test_map);
+    test_map = NULL;
+    test_map = init_hashmap(4);
+
+    // Test max capacity reached, capacity expanded
+    idx = insert_hashmap(test_map, &test1);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, 0);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "0", sizes[0]));
+    ASSERT_EQUAL(test_map->used, 1);
+
+    idx = insert_hashmap(test_map, &test2);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, 1);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "00", sizes[1]));
+    ASSERT_EQUAL(test_map->used, 2);
+
+    idx = insert_hashmap(test_map, &test3);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, 2);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "000", sizes[2]));
+    ASSERT_EQUAL(test_map->used, 3);
+
+    idx = insert_hashmap(test_map, &test4);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, 5);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "5", sizes[3]));
+    ASSERT_EQUAL(test_map->used, 4);
+
+    // Make sure capacity doubled
+    printf("Capacity: %ld\n", test_map->capacity);
+    ASSERT_EQUAL(test_map->capacity, 8);
+
+    // Free hashmap
+    free_hashmap(test_map);
+    test_map = NULL;
+    test_map = init_hashmap(MAX_HASHMAP_SIZE);
+
+    // Simulate Hashmap at least LOAD_CAPACITY full
+    unsigned int size = (int)(MAX_HASHMAP_SIZE * MAX_LOAD_CAPACITY);
+    printf("Simulated size %u\n", size);
+
+    // Insert one to initialize array
+    map_t test_max = {"\n", (void *)&sizes[0]};
+    idx = insert_hashmap(test_map, &test_max);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, 0);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "\n", 1));
+    ASSERT_EQUAL(test_map->used, 1);
+
+    for (unsigned int ctr = 0; ctr < size; ctr++) {
+        test_map->_contents[ctr].data = "test";
+        test_map->used++;
+    }
+
+    // Try to insert when at max capacity
+    printf("Simulated size %u\n", size);
+    idx = insert_hashmap(test_map, &test1);
+    printf("num %d\n", idx);
+    ASSERT_EQUAL(idx, -1);
+    ASSERT_FALSE(test_map->_contents[idx].is_deleted);
+    ASSERT_FALSE(memcmp((char *)test_map->_contents[0].data, "\n", 2));
+    ASSERT_EQUAL(test_map->used, size);
+    ASSERT_EQUAL(test_map->capacity, size)
 
     return result;
 }
