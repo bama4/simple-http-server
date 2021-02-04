@@ -48,16 +48,17 @@ int hashval(hashmap_t *map, char *data, size_t len) {
     for (unsigned int ctr = 0; ctr < len; ctr++) {
         value += (char)(data[ctr]);
     }
-    printf("%d\n", value);
+
     value = value % map->capacity;
     unsigned int iter_count = 0;
 
     // Keep iterating until there is a free or deleted space
-    while (!(map->_contents[value].data == NULL ||
-             map->_contents[value].is_deleted == 0)) {
-
+    printf("Before loop %d\n", value);
+    while (map->_contents[value].data != NULL &&
+           map->_contents[value].is_deleted != 1) {
+        printf("%d\n", value);
         // There is a collision, recalculate value
-        value += (value + 1) % map->capacity;
+        value = (value + 1) % map->capacity;
         iter_count += 1;
 
         // No place found
@@ -129,7 +130,6 @@ int insert_hashmap(hashmap_t *map, map_t *pair) {
         map->_contents = new_contents;
         map->capacity = new_size;
     }
-
     int idx = 0;
     // Calculate hash value for item, treats value as length
     int len = *((int *)pair->value);

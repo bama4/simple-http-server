@@ -38,10 +38,10 @@ int test_insert_hashmap() {
     map_t test1 = {"0", (void *)&sizes[0]};
     map_t test2 = {"00", (void *)&sizes[1]};
     map_t test3 = {"000", (void *)&sizes[2]};
-    map_t test4 = {"4", (void *)&sizes[3]};
+    map_t test4 = {"5", (void *)&sizes[3]};
 
     idx = insert_hashmap(test_map, &test1);
-    printf("%d\n", idx);
+    printf("num %d\n", idx);
     ASSERT_EQUAL(idx, 0);
     ASSERT_FALSE(test_map->_contents[idx].is_deleted);
     ASSERT(memcmp((char *)test_map->_contents[idx].data, "0", sizes[0]));
@@ -50,7 +50,7 @@ int test_insert_hashmap() {
     // Insert one item (collision)
     sizes[1] = 3;
     idx = insert_hashmap(test_map, &test2);
-    printf("%d\n", idx);
+    printf("num %d\n", idx);
     ASSERT_EQUAL(idx, 1);
     ASSERT_FALSE(test_map->_contents[idx].is_deleted);
     ASSERT(memcmp((char *)test_map->_contents[idx].data, "00", sizes[1]));
@@ -59,7 +59,7 @@ int test_insert_hashmap() {
     // Insert one item (collision)
     sizes[2] = 4;
     idx = insert_hashmap(test_map, &test3);
-    printf("%d\n", idx);
+    printf("num %d\n", idx);
     ASSERT_EQUAL(idx, 2);
     ASSERT_FALSE(test_map->_contents[idx].is_deleted);
     ASSERT(memcmp((char *)test_map->_contents[idx].data, "000", sizes[2]));
@@ -68,11 +68,13 @@ int test_insert_hashmap() {
     // Insert one item (collision)
     sizes[3] = 2;
     idx = insert_hashmap(test_map, &test4);
-    printf("%d\n", idx);
+    printf("num %d\n", idx);
     ASSERT_EQUAL(idx, 5);
     ASSERT_FALSE(test_map->_contents[idx].is_deleted);
-    ASSERT(memcmp((char *)test_map->_contents[idx].data, "00", sizes[3]));
+    ASSERT(memcmp((char *)test_map->_contents[idx].data, "5", sizes[3]));
     ASSERT_EQUAL(test_map->used, 4);
+
+    // Delete entry and test entry replaced
 
     return result;
 }
