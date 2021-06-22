@@ -53,7 +53,7 @@ cd build/
 Then run CMake to generate the Makefile for the tests
 
 ```
-cmake -DTEST=ON ../
+cmake -DCMAKE_BUILD_TYPE=Debug -DTEST=ON ../
 ```
 
 Run the tests associated with the package
