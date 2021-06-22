@@ -13,8 +13,17 @@ add_compile_options(-Wall -Wextra -pedantic -Werror)
 # Options for test run
 OPTION(TEST "Test mode" OFF)
 
+# Options for sanitize run
+OPTION(SANITIZE "Sanitize mode" OFF)
+
 # Places output in bin
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+# Enable Address sanitizer
+if(SANITIZE)
+	set(CMAKE_BUILD_TYPE "Debug")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+endif()
 
 # Add utils_test
 if(TEST)
