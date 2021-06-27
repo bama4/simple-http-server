@@ -56,6 +56,14 @@ Then run CMake to generate the Makefile for the tests
 cmake -DCMAKE_BUILD_TYPE=Debug -DTEST=ON ../
 ```
 
+To run with ASAN support, run the following (turn on SANITIZE):
+
+```
+cmake -DCMAKE_BUILD_TYPE=Debug -DTEST=ON -DSANITIZE=ON ../
+```
+
+```
+
 Run the tests associated with the package
 
 ```
