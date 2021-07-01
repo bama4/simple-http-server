@@ -24,7 +24,7 @@ hashmap_t *init_hashmap(size_t item_size);
 
 /**
  * @brief      Converts the data to an unsigned integer value
- *
+ *             Uses a linear probing method for resolving collisions
  *
  * @param      map  The map to calculate the hash value
  * @param      data     The data to find a used hash idx for that contains
@@ -33,10 +33,11 @@ hashmap_t *init_hashmap(size_t item_size);
  *
  * @return     Returns the hash value, else -1 if unsuccessful
  */
-int used_hashval(hashmap_t *map, char *data, size_t len);
+int find_used_hashval(hashmap_t *map, char *data, size_t len);
 
 /**
  * @brief      Converts the data to an unsigned integer value
+ *             Uses a linear probing method for resolving collisions
  *
  * @param      map  The map to calculate the hash value
  * @param      data     The data
@@ -45,7 +46,7 @@ int used_hashval(hashmap_t *map, char *data, size_t len);
  *
  * @return     Returns the hash value, else -1 if unsuccessful
  */
-int unused_hashval(hashmap_t *map, char *data, size_t len);
+int find_unused_hashval(hashmap_t *map, char *data, size_t len);
 
 /**
  * @brief      Inserts the given map (key value pair) into the given hashmap

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/param.h>
 
 /**
  * @brief      Initializes the hashmap.
@@ -36,7 +37,8 @@ hashmap_t *init_hashmap(size_t item_size) {
 
 /**
  * @brief      Converts the data to an unsigned integer value
- * the map
+ *             the map
+ *             Uses a linear probing method for resolving collisions
  *
  * @param      map  The map to calculate the hash value
  * @param      data     The data to find a hash idx for
@@ -44,7 +46,7 @@ hashmap_t *init_hashmap(size_t item_size) {
  *
  * @return     Returns the hash value, else -1 if unsuccessful
  */
-int unused_hashval(hashmap_t *map, char *data, size_t len) {
+int find_unused_hashval(hashmap_t *map, char *data, size_t len) {
     if (map == NULL || data == NULL || len == 0) {
         return -1;
     }
@@ -76,6 +78,7 @@ int unused_hashval(hashmap_t *map, char *data, size_t len) {
 
 /**
  * @brief      Converts the data to an unsigned integer value
+ *             Uses a linear probing method for resolving collisions
  *
  *
  * @param      map  The map to calculate the hash value
@@ -85,7 +88,7 @@ int unused_hashval(hashmap_t *map, char *data, size_t len) {
  *
  * @return     Returns the hash value, else -1 if unsuccessful
  */
-int used_hashval(hashmap_t *map, char *data, size_t len) {
+int find_used_hashval(hashmap_t *map, char *data, size_t len) {
     if (map == NULL || data == NULL || len == 0) {
         return -1;
     }
@@ -149,41 +152,35 @@ int insert_hashmap(hashmap_t *map, map_t *pair, unsigned int key_len,
         // Time to increase the capacity
 
         // Check that the new capacity won't exceed MAX_HASHMAP_SIZE
-        size_t new_size = 0;
-        if (map->capacity == MAX_HASHMAP_SIZE) {
-            // map already at MAX_HASHMAP_SIZE
-            return -1;
-        } else if (map->capacity * 2 <= MAX_HASHMAP_SIZE) {
-            // Only increase capacity to the MAX_HASHMAP_SIZE
-            new_size = map->capacity * 2;
+        size_t new_size = MIN(map->capacity * 2, MAX_HASHMAP_SIZE);
+        size_t old_size = map->capacity;
+        void *new_mem_ptr = NULL;
+        if (new_size > map->capacity) {
+            // resize
+            if ((new_mem_ptr = realloc(map->_contents,
+                                       new_size * sizeof(*map->_contents))) ==
+                NULL) {
+                // Failed to realloc
+                return -1;
+            }
+            // Update hashmap entries ptr
+            map->_contents = (entry_t *)new_mem_ptr;
+
+            // Update capacity
+            map->capacity = new_size;
+
+            // Clear new bits
+            memset(map->_contents + old_size, 0,
+                   (new_size - old_size) * sizeof(*map->_contents));
+
         } else {
-            // Allocate what is left
-            new_size = map->capacity + (MAX_HASHMAP_SIZE - map->capacity);
-        }
-
-        entry_t *old_contents = map->_contents;
-        entry_t *new_contents = NULL;
-        if ((new_contents = calloc(new_size, sizeof(entry_t))) == NULL) {
+            // Failed to resize
             return -1;
         }
-
-        // Copy memory contents to newly allocated memory
-        entry_t *dst = memcpy(new_contents, old_contents, map->used);
-
-        if (dst == NULL) {
-            // Failed to increase the capacity, memcpy failed
-            return -1;
-        }
-        // Free old contents buffer
-        free(map->_contents);
-        map->_contents = NULL;
-
-        map->_contents = new_contents;
-        map->capacity = new_size;
     }
     int idx = 0;
     // Calculate hash value for item
-    idx = unused_hashval(map, pair->key, key_len);
+    idx = find_unused_hashval(map, pair->key, key_len);
     if (idx == -1) {
         // There is an issue with inserting the data
         return -1;
@@ -223,7 +220,7 @@ int remove_hashmap(hashmap_t *map, void *key, unsigned int key_len,
     }
 
     // Calculate hash value for item as it is represented in the hashmap
-    int idx = used_hashval(map, key, key_len);
+    int idx = find_used_hashval(map, key, key_len);
     if (idx == -1) {
         // There is an issue with generating the index for the key
         return 0;
