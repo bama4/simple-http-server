@@ -7,8 +7,6 @@
 
 #define MAX_TASKPOOL_SIZE 5
 
-typedef void (*call)(void *in);
-
 typedef struct _task_pool task_pool_t;
 
 typedef struct {
@@ -18,10 +16,8 @@ typedef struct {
 } thread_t;
 
 struct _task_pool {
-    queue_t *t_pool_queue;  /*a queue of tasks */
-    unsigned int num_tasks; /*number of tasks currently in the queue*/
-    sem_t *num_tasks_sem;
-    sem_t *t_pool_queue_sem;
+    queue_t *t_pool_queue; /*a queue of task_t */
+    sem_t t_pool_queue_sem;
     thread_t *master_thread; /*a master thread that is responsible for executing
                               tasks in the queue*/
 };
@@ -33,7 +29,16 @@ struct _task_pool {
  *
  * @return     Returns an initialized task_pool
  */
-task_pool_t *init_task_pool(void);
+task_pool_t *init_task_pool();
+
+/**
+ * @brief      Initializes the master thread.
+ *
+ * @param      t_pool  The t pool
+ *
+ * @return     Returns the thread object
+ */
+thread_t *task_pool_init_master_thread(task_pool_t *t_pool);
 
 /**
  * @brief      Adds (enqueues) a task to the task_pool
@@ -43,17 +48,26 @@ task_pool_t *init_task_pool(void);
  *
  * @return     Returns the task added, else returns NULL
  */
-void *task_pool_add(task_pool_t *t_pool, task_t *task);
+void *task_pool_add_task(task_pool_t *t_pool, task_t *task);
 
 /**
- * @brief      Initializes the task pool master.
- *             The master thread is initialized with a execute task function
+ * @brief      Dequeues a task from the t_pool queue
+ *
+ * @param      t_pool  The t pool
+ *
+ * @return     returns the data dequeued
+ */
+void *task_pool_get_task(task_pool_t *t_pool);
+
+/**
+ * @brief      The main task of the thread pool master.
+ *             The master thread is initialized with an execute task function
  *             that dequeues the next task from the task_pool_queue and executes
  * 			   it as a new thread
  *
  * @return     Returns the thread_t ptr to the master thread
  */
-thread_t *init_task_pool_master(void);
+void *task_pool_master_task(void *t_pool);
 
 /**
  * @brief      Starts a new thread with the given task

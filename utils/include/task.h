@@ -1,7 +1,7 @@
 #ifndef TASK_H_
 #define TASK_H_
 
-typedef void (*call)(void *arg);
+typedef void *(*call)(void *arg);
 
 typedef struct {
 

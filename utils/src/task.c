@@ -9,7 +9,7 @@
  *
  * @return     Returns the initialized task
  */
-task_t *init_task(void (*func)(void *), void *arg) {
+task_t *init_task(call func, void *arg) {
     task_t *task = NULL;
     if ((task = calloc(1, sizeof(*task))) == NULL) {
         /*Failed to allocate memory*/

@@ -12,6 +12,7 @@ add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 # Options for test run
 OPTION(TEST "Test mode" OFF)
+OPTION(DEBUG "Debug mode" OFF)
 
 # Places output in bin
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -25,6 +26,11 @@ if(TEST)
 	enable_testing()
 	add_test(utils_test ${CMAKE_BINARY_DIR}/bin/utils_test)
 	set_tests_properties(utils_test PROPERTIES PASS_REGULAR_EXPRESSION "SUCCESS")
+	target_link_libraries (utils_test PUBLIC pthread)
 endif()
 
+# Enable PTHREADS
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 add_library(utils SHARED ${SOURCES})
+target_link_libraries (utils PUBLIC pthread)
