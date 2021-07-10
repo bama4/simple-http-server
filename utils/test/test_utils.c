@@ -3,6 +3,7 @@
 extern int test_linked_list();
 extern int test_queue();
 extern int test_vector();
+extern int test_hashmap();
 
 int main() {
     // Run all utils tests
@@ -18,6 +19,7 @@ int main() {
 
     // Run all vector tests
     result &= test_vector();
+    result &= test_hashmap();
 
     return result;
 }
