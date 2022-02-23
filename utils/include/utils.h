@@ -3,11 +3,9 @@
 #include <stdio.h>
 
 // Define debug print
-#define DEBUG_PRINT(msg)                                                       \
-    do {                                                                       \
-    } while (0)
+#define DEBUG_PRINT(msg)
 #ifdef DEBUG
-#define DEBUG_PRINT(msg) printf(msg)
+#define DEBUG_PRINT(msg, ...) printf(msg)
 #endif
 
 #endif /*UTILS_H_*/

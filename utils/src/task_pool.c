@@ -1,3 +1,8 @@
+/*
+This file defines an API for a task pool. A task pool is a
+queue of tasks with a master thread assigned to
+
+ */
 #include "task_pool.h"
 #include "queue.h"
 #include "task.h"
@@ -7,6 +12,11 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#define MAIN_TASK_LOOP_VAL 0
+#ifdef DEBUG
+#define MAIN_TASK_LOOP_VAL 1
+#endif
 
 /**
  * @brief      Initializes the task pool. This includes initializing the
@@ -74,7 +84,8 @@ thread_t *task_pool_init_master_thread(task_pool_t *t_pool) {
         goto fail;
     }
     pthread_join(t_pool->master_thread->thread_id, NULL);
-    DEBUG_PRINT("Master thread attempting to take from queue\n");
+    DEBUG_PRINT("Master thread attempting to take from queue\n")
+    // t_pool->master_thread->thread_id);
 
     return t_pool->master_thread;
 fail:
@@ -111,18 +122,31 @@ void *task_pool_get_task(task_pool_t *t_pool) {
  */
 void *task_pool_master_task(void *t_pool) {
     assert(t_pool); // assert not NULL
-    void *task = NULL;
+    task_t *task = NULL;
+    thread_t thread;
 
-    /*loop on queue forever*/
-    while (1) {
+    /*loop on queue forever if not in debug mode*/
+    do {
         sleep(1);
         DEBUG_PRINT("Master thread attempting to take from queue\n");
-        task = task_pool_get_task(t_pool);
+        task = (task_t *)task_pool_get_task(t_pool);
+        thread.t_pool = t_pool;
+        thread.task = *task;
 
         if (task) {
-            DEBUG_PRINT("Found a task in the queue\n");
+            DEBUG_PRINT("Found a task in the queue, executing\n");
+            /* Execute thread */
+            if (pthread_create(&thread.thread_id, NULL, *(thread.task.func),
+                               thread.task.arg) < 0) {
+                /*Error creating thread*/
+                goto fail;
+            }
+            DEBUG_PRINT("Executing task with ID \n");
         }
-    }
+    } while (MAIN_TASK_LOOP_VAL);
+
+fail:
+    return NULL;
 }
 
 /**
