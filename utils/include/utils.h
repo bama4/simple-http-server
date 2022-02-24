@@ -3,9 +3,10 @@
 #include <stdio.h>
 
 // Define debug print
-#define DEBUG_PRINT(msg)
 #ifdef DEBUG
-#define DEBUG_PRINT(msg, ...) printf(msg)
+#define DEBUG_PRINT(...) printf(__VA_ARGS__)
+#else
+#define DEBUG_PRINT(...)
 #endif
 
 #endif /*UTILS_H_*/

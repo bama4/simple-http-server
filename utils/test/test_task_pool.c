@@ -42,9 +42,6 @@ int test_task_pool_get_task() {
     data = task_pool_get_task(t_pool);
     ASSERT_EQUAL((void *)&task, data);
 
-    // Dequeue again, expecting null
-    data = task_pool_get_task(t_pool);
-    ASSERT_IS_NULL(data);
     free_task_pool(t_pool);
 
     return result;
@@ -55,6 +52,7 @@ int test_task_pool_init_master_thread() {
     int result = SUCCESS;
     int task_1_arg = 1;
     thread_t *master_thread = NULL;
+    void *data = NULL;
 
     // Init task pool
     task_pool_t *t_pool = init_task_pool();
@@ -70,6 +68,10 @@ int test_task_pool_init_master_thread() {
     // Init main task pool thread
     master_thread = task_pool_init_master_thread(t_pool);
     ASSERT_NOT_NULL(master_thread);
+    data = task_pool_get_task(t_pool);
+
+    // Assert the task has been dequeued
+    ASSERT_IS_NULL(data);
     free_task_pool(t_pool);
 
     return result;

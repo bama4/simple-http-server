@@ -20,6 +20,12 @@ OPTION(SANITIZE "Sanitize mode" OFF)
 # Places output in bin
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Enable DEBUG MODE
+if(DEBUG)
+	add_definitions(-DDEBUG=1)
+endif()
+
+
 # Enable Address sanitizer
 if(SANITIZE)
 	set(CMAKE_BUILD_TYPE "Debug")

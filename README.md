@@ -53,7 +53,7 @@ cd build/
 Then run CMake to generate the Makefile for the tests
 
 ```
-cmake -DCMAKE_BUILD_TYPE=Debug -DTEST=ON ../
+cmake -DCMAKE_BUILD_TYPE=Debug -DTEST=ON -DDEBUG=ON ../
 ```
 
 To run with ASAN support, run the following (turn on SANITIZE):
