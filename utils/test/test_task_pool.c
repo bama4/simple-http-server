@@ -1,11 +1,17 @@
 #include "task.h"
 #include "task_pool.h"
 #include "test_framework.h"
+#include "utils.h" /* ProgramState */
 #include <stdlib.h>
 
 void *task_test_func(void *test_arg) {
-    printf("I am a task and my number is %d\n", (int)*(int *)test_arg);
+    ((task_arg_t *)test_arg)->pre_task_callback();
+    printf("I am a task and my number is %d "
+           "and total num threads is %u\n",
+           (int)*(int *)((task_arg_t *)test_arg)->arg,
+           ProgramState.total_num_threads);
 
+    ((task_arg_t *)test_arg)->post_task_callback();
     return NULL;
 }
 
@@ -59,8 +65,7 @@ int test_task_pool_init_master_thread() {
 
     // Create task parameters
     task_t task;
-    task.func = task_test_func;
-    task.arg = (void *)&task_1_arg;
+    init_task_values(&task, task_test_func, (void *)&task_1_arg);
 
     // Add a task to the queue and check that it could be obtained
     enqueue(t_pool->t_pool_queue, (void *)&task);

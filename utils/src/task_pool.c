@@ -6,7 +6,7 @@ queue of tasks with a master thread assigned to
 #include "task_pool.h"
 #include "queue.h"
 #include "task.h"
-#include "utils.h"
+#include "utils.h" /* DEBUG_PRINT, ProgramState */
 #include <assert.h>
 #include <pthread.h>
 #include <semaphore.h>
@@ -56,7 +56,10 @@ task_pool_t *init_task_pool() {
     return t_pool;
 fail:
     // Cleanup
-    free_task_pool(t_pool);
+    if (t_pool)
+        free_task_pool(t_pool);
+    else if (t_pool_queue)
+        free_queue(t_pool_queue);
     return NULL;
 }
 
@@ -70,6 +73,9 @@ fail:
 thread_t *task_pool_init_master_thread(task_pool_t *t_pool) {
     assert(t_pool);
 
+    // Make sure we havent hit the max number of allowable threads from the
+    // process
+
     // Init and start master thread
     if ((t_pool->master_thread = calloc(1, sizeof(*t_pool->master_thread))) ==
         NULL) {
@@ -79,10 +85,10 @@ thread_t *task_pool_init_master_thread(task_pool_t *t_pool) {
 
     t_pool->master_thread->t_pool = t_pool;
     t_pool->master_thread->task.func = &task_pool_master_task;
-    t_pool->master_thread->task.arg = (void *)t_pool;
+    t_pool->master_thread->task.arg.arg = (void *)t_pool;
     if (pthread_create(&t_pool->master_thread->thread_id, NULL,
                        *(t_pool->master_thread->task.func),
-                       t_pool->master_thread->task.arg) < 0) {
+                       (void *)&t_pool->master_thread->task.arg) < 0) {
         /*Error creating thread*/
         goto fail;
     }
@@ -133,6 +139,14 @@ void *task_pool_master_task(void *t_pool) {
     /*loop on queue forever if not in debug mode*/
     do {
         DEBUG_PRINT("Master thread attempting to take from queue\n");
+
+        /* Do not dequeue and create threads if we are at our max */
+        if (MAX_NUM_THREADS == ProgramState.total_num_threads) {
+            DEBUG_PRINT(
+                "Max number of threads reached, will not dequeue tasks\n");
+            continue;
+        }
+
         task = (task_t *)task_pool_get_task(t_pool);
 
         if (task) {
@@ -141,10 +155,11 @@ void *task_pool_master_task(void *t_pool) {
             thread.t_pool = t_pool;
             thread.task = *task;
             if (pthread_create(&thread.thread_id, NULL, *(thread.task.func),
-                               thread.task.arg) < 0) {
+                               (void *)&thread.task.arg) < 0) {
                 /*Error creating thread*/
                 goto fail;
             }
+
             DEBUG_PRINT("Executing task with ID %d\n", (int)thread.thread_id);
         }
     } while (MAIN_TASK_LOOP_VAL);
