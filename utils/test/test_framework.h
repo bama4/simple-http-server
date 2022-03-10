@@ -43,4 +43,10 @@
         return FAIL;                                                           \
     }
 
+#define ASSERT_ABOVE_ZERO(var1)                                                \
+    if (var1 <= 0) {                                                           \
+        printf("ASSERT_ABOVE_ZERO failed on line %d\n", __LINE__);             \
+        return FAIL;                                                           \
+    }
+
 #endif /*TEST_FRAMEWORK_H_*/

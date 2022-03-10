@@ -4,6 +4,7 @@ extern int test_linked_list();
 extern int test_queue();
 extern int test_vector();
 extern int test_hashmap();
+extern int test_task_pool();
 
 int main() {
     // Run all utils tests
@@ -19,7 +20,12 @@ int main() {
 
     // Run all vector tests
     result &= test_vector();
+
+    // Run all hashmap tests
     result &= test_hashmap();
+
+    // Run all task_pool tests
+    result &= test_task_pool();
 
     return result;
 }
